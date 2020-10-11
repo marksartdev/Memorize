@@ -12,14 +12,16 @@ struct ContentView: View {
     var body: some View {
         HStack {
             ForEach(emojiMemoryGame.cards) { card in
-                CardView(card: card).onTapGesture {
-                    emojiMemoryGame.choose(card: card)
-                }
+                CardView(card: card)
+                    .aspectRatio(CGSize(width: 2, height: 3), contentMode: .fit)
+                    .onTapGesture {
+                        emojiMemoryGame.choose(card: card)
+                    }
             }
         }
         .padding()
         .foregroundColor(.orange)
-        .font(.largeTitle)
+        .font(emojiMemoryGame.cards.count == 10 ? .headline : .largeTitle)
     }
 }
 
