@@ -51,11 +51,6 @@ class EmojiMemoryGame: ObservableObject {
     
     // MARK: - Theme
     
-    var newGameSystemImageName: String
-    {
-        cards.filter { !$0.isMatched }.count == 0 ? "play" : "goforward"
-    }
-    
     var name: String {
         if let theme = currentTheme {
             return theme.name

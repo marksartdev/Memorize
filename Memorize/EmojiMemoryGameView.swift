@@ -13,16 +13,17 @@ struct EmojiMemoryGameView: View {
     
     var body: some View {
         VStack {
-            HStack{
+            HStack {
+                Spacer()
                 Button(action: emojiMemoryGame.startNewGame) {
-                    Image(systemName: emojiMemoryGame.newGameSystemImageName)
-                        .frame(width: iconSize.width, height: iconSize.height, alignment: .center)
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke())
-                        .foregroundColor(colorScheme == .dark ? .white : .blue)
+                    Text("New Game")
+                        .foregroundColor(colorScheme == .dark ? .green : .blue)
                 }
-                Text("Score: \(emojiMemoryGame.score)").font(.title2).padding(.leading)
-                Text(emojiMemoryGame.name).font(.title).padding(.leading)
+            }
+            HStack {
+                Text(emojiMemoryGame.name)
+                    .font(.largeTitle)
+                    .bold()
                 Spacer()
             }
             Grid(emojiMemoryGame.cards) { card in
@@ -31,6 +32,9 @@ struct EmojiMemoryGameView: View {
                 }
                 .padding(5)
             }
+            Text("Score: \(emojiMemoryGame.score)")
+                .font(.title2)
+                .foregroundColor(colorScheme == .dark ? .green : .blue)
         }
         .padding()
     }
@@ -62,13 +66,11 @@ struct CardView: View {
             .font(.system(size: fontSize(for: geometry.size)))
             .foregroundColor(colors.first ?? .clear)
         }
-        .aspectRatio(aspectRatioSize, contentMode: .fit)
     }
     
     // MARK: Drawing Constants
     
     private let cornerRadius: CGFloat = 10.0
-    private let aspectRatioSize: CGSize = CGSize(width: 2, height: 3)
     private let edgeLineWidth: CGFloat = 3
     
     private func fontSize(for size: CGSize) -> CGFloat {

@@ -10,8 +10,8 @@ import Foundation
 struct MemoryGame<CardContent> where CardContent: Equatable {
     private let maxScorePerMatch = 10
     private let maxPenalizingPerMismatch = 5
-    private var lastChoiceFirstCartTime: Date = Date()
-    private var lastChoiceSecondCartTime: Date = Date()
+    private let timeFactor: Double = 3
+    private var choiceFirstCartInPairTime: Date = Date()
     private(set) var score: Int = 0
     private(set) var cards = Array<Card>()
     
@@ -24,20 +24,16 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                 }
                 cards[index].isFaceUp = index == newValue
             }
-            lastChoiceFirstCartTime = Date()
+            choiceFirstCartInPairTime = Date()
         }
     }
     
     private mutating func calculateScore(isMatching: Bool) {
-        let deltaBetweenCardsInPair = lastChoiceFirstCartTime.timeIntervalSinceNow.rounded()
-        let deltaBetweenPairs = (lastChoiceSecondCartTime.timeIntervalSinceNow - deltaBetweenCardsInPair).rounded()
-        let factorBetweenCardsInPair = Int(deltaBetweenCardsInPair * deltaBetweenCardsInPair)
-        let factorBetweenPairs = 2 * Int(deltaBetweenPairs * deltaBetweenPairs)
-        
+        let choiceTimeFactor = Int(abs((timeFactor * choiceFirstCartInPairTime.timeIntervalSinceNow).rounded()))
         if isMatching {
-            score += max((maxScorePerMatch - factorBetweenCardsInPair - factorBetweenPairs), 1)
+            score += max((maxScorePerMatch - choiceTimeFactor), 1)
         } else {
-            score -= max(min((factorBetweenCardsInPair + factorBetweenPairs), maxPenalizingPerMismatch), 1)
+            score -= max(min(choiceTimeFactor, maxPenalizingPerMismatch), 1)
         }
     }
     
@@ -50,10 +46,6 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(content: content, id: pairIndex * 2 + 1))
         }
         cards.shuffle()
-        
-        let now = Date()
-        lastChoiceFirstCartTime = now
-        lastChoiceSecondCartTime = now
     }
     
     mutating func choose(card: Card) {
@@ -73,7 +65,6 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     }
                 }
                 cards[chosenIndex].isFaceUp = true
-                lastChoiceSecondCartTime = Date()
             } else {
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
