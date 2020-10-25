@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var emojiMemoryGame: EmojiMemoryGame
     
     var body: some View {
@@ -37,8 +37,8 @@ struct EmojiMemoryGameView: View {
     
     // MARK: Drawing Constants
     
-    let iconSize: CGSize = CGSize(width: 19.0, height: 19.0)
-    let cornerRadius: CGFloat = 10.0
+    private let iconSize: CGSize = CGSize(width: 19.0, height: 19.0)
+    private let cornerRadius: CGFloat = 10.0
 }
 
 struct CardView: View {
@@ -67,11 +67,11 @@ struct CardView: View {
     
     // MARK: Drawing Constants
     
-    let cornerRadius: CGFloat = 10.0
-    let aspectRatioSize: CGSize = CGSize(width: 2, height: 3)
-    let edgeLineWidth: CGFloat = 3
+    private let cornerRadius: CGFloat = 10.0
+    private let aspectRatioSize: CGSize = CGSize(width: 2, height: 3)
+    private let edgeLineWidth: CGFloat = 3
     
-    func fontSize(for size: CGSize) -> CGFloat {
+    private func fontSize(for size: CGSize) -> CGFloat {
         min(size.width, size.height) * 0.75
     }
 }

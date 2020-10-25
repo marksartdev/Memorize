@@ -8,14 +8,14 @@
 import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
-    let maxScorePerMatch = 10
-    let maxPenalizingPerMismatch = 5
-    var score: Int = 0
-    var cards = Array<Card>()
-    var lastChoiceFirstCartTime: Date = Date()
-    var lastChoiceSecondCartTime: Date = Date()
+    private let maxScorePerMatch = 10
+    private let maxPenalizingPerMismatch = 5
+    private var lastChoiceFirstCartTime: Date = Date()
+    private var lastChoiceSecondCartTime: Date = Date()
+    private(set) var score: Int = 0
+    private(set) var cards = Array<Card>()
     
-    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter { cards[$0].isFaceUp }.only }
         set {
             for index in cards.indices {
@@ -25,6 +25,19 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                 cards[index].isFaceUp = index == newValue
             }
             lastChoiceFirstCartTime = Date()
+        }
+    }
+    
+    private mutating func calculateScore(isMatching: Bool) {
+        let deltaBetweenCardsInPair = lastChoiceFirstCartTime.timeIntervalSinceNow.rounded()
+        let deltaBetweenPairs = (lastChoiceSecondCartTime.timeIntervalSinceNow - deltaBetweenCardsInPair).rounded()
+        let factorBetweenCardsInPair = Int(deltaBetweenCardsInPair * deltaBetweenCardsInPair)
+        let factorBetweenPairs = 2 * Int(deltaBetweenPairs * deltaBetweenPairs)
+        
+        if isMatching {
+            score += max((maxScorePerMatch - factorBetweenCardsInPair - factorBetweenPairs), 1)
+        } else {
+            score -= max(min((factorBetweenCardsInPair + factorBetweenPairs), maxPenalizingPerMismatch), 1)
         }
     }
     
@@ -64,19 +77,6 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             } else {
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
-        }
-    }
-    
-    private mutating func calculateScore(isMatching: Bool) {
-        let deltaBetweenCardsInPair = lastChoiceFirstCartTime.timeIntervalSinceNow.rounded()
-        let deltaBetweenPairs = (lastChoiceSecondCartTime.timeIntervalSinceNow - deltaBetweenCardsInPair).rounded()
-        let factorBetweenCardsInPair = Int(deltaBetweenCardsInPair * deltaBetweenCardsInPair)
-        let factorBetweenPairs = 2 * Int(deltaBetweenPairs * deltaBetweenPairs)
-        
-        if isMatching {
-            score += max((maxScorePerMatch - factorBetweenCardsInPair - factorBetweenPairs), 1)
-        } else {
-            score -= max(min((factorBetweenCardsInPair + factorBetweenPairs), maxPenalizingPerMismatch), 1)
         }
     }
     
