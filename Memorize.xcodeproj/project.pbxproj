@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		432454872548917A00D7D374 /* Cardify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432454862548917A00D7D374 /* Cardify.swift */; };
 		43322114252EF74D00FDF11A /* MemorizeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43322113252EF74D00FDF11A /* MemorizeApp.swift */; };
 		43322116252EF74D00FDF11A /* EmojiMemoryGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43322115252EF74D00FDF11A /* EmojiMemoryGameView.swift */; };
 		43322118252EF75000FDF11A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43322117252EF75000FDF11A /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		432454862548917A00D7D374 /* Cardify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardify.swift; sourceTree = "<group>"; };
 		43322110252EF74D00FDF11A /* Memorize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Memorize.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43322113252EF74D00FDF11A /* MemorizeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemorizeApp.swift; sourceTree = "<group>"; };
 		43322115252EF74D00FDF11A /* EmojiMemoryGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiMemoryGameView.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				439525B2253C9A5C004DB1D1 /* GridLayout.swift */,
 				43B43DE3253B7F1900EADF3A /* Grid.swift */,
 				43A17D5A2546DF410048F3E1 /* Pie.swift */,
+				432454862548917A00D7D374 /* Cardify.swift */,
 				43322115252EF74D00FDF11A /* EmojiMemoryGameView.swift */,
 				439525B5253CA918004DB1D1 /* Array+Identifiable.swift */,
 				43CB91EC253F70F6000E95CC /* Array+Only.swift */,
@@ -167,6 +170,7 @@
 				43B43DE4253B7F1900EADF3A /* Grid.swift in Sources */,
 				439525B6253CA918004DB1D1 /* Array+Identifiable.swift in Sources */,
 				43E1D39E2532343C00881C25 /* EmojiMemoryGame.swift in Sources */,
+				432454872548917A00D7D374 /* Cardify.swift in Sources */,
 				43CB91ED253F70F6000E95CC /* Array+Only.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
