@@ -8,12 +8,12 @@
 import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
+    private(set) var score: Int
+    private(set) var cards: Array<Card>
     private let maxScorePerMatch = 10
     private let maxPenalizingPerMismatch = 5
     private let timeFactor: Double = 3
     private var choiceFirstCartInPairTime: Date = Date()
-    private(set) var score: Int = 0
-    private(set) var cards = Array<Card>()
     
     private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter { cards[$0].isFaceUp }.only }
@@ -28,16 +28,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
     }
     
-    private mutating func calculateScore(isMatching: Bool) {
-        let choiceTimeFactor = Int(abs((timeFactor * choiceFirstCartInPairTime.timeIntervalSinceNow).rounded()))
-        if isMatching {
-            score += max((maxScorePerMatch - choiceTimeFactor), 1)
-        } else {
-            score -= max(min(choiceTimeFactor, maxPenalizingPerMismatch), 1)
-        }
-    }
-    
-    mutating func startNewGame(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
+    init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
         score = 0
         cards = Array<Card>()
         for pairIndex in 0..<numberOfPairsOfCards {
@@ -68,6 +59,15 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             } else {
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
+        }
+    }
+    
+    private mutating func calculateScore(isMatching: Bool) {
+        let choiceTimeFactor = Int(abs((timeFactor * choiceFirstCartInPairTime.timeIntervalSinceNow).rounded()))
+        if isMatching {
+            score += max((maxScorePerMatch - choiceTimeFactor), 1)
+        } else {
+            score -= max(min(choiceTimeFactor, maxPenalizingPerMismatch), 1)
         }
     }
     

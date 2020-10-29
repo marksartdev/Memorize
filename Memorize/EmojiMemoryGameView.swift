@@ -15,7 +15,7 @@ struct EmojiMemoryGameView: View {
         VStack {
             HStack {
                 Spacer()
-                Button(action: emojiMemoryGame.startNewGame) {
+                Button(action: emojiMemoryGame.resetGame) {
                     Text("New Game")
                         .foregroundColor(colorScheme == .dark ? .green : .blue)
                 }
@@ -38,11 +38,6 @@ struct EmojiMemoryGameView: View {
         }
         .padding()
     }
-    
-    // MARK: Drawing Constants
-    
-    private let iconSize: CGSize = CGSize(width: 19.0, height: 19.0)
-    private let cornerRadius: CGFloat = 10.0
 }
 
 struct CardView: View {
@@ -79,7 +74,6 @@ struct CardView: View {
 struct EmojiMemoryGameView_Previews: PreviewProvider {
     static var previews: some View {
         let emojiMemoryGame = EmojiMemoryGame()
-        emojiMemoryGame.startNewGame()
         emojiMemoryGame.choose(card: emojiMemoryGame.cards[0])
         return EmojiMemoryGameView(emojiMemoryGame: emojiMemoryGame)
     }
