@@ -8,12 +8,9 @@
 import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
+    private let maxAdditionScore: Double = 5
     private(set) var score: Int
     private(set) var cards: Array<Card>
-    private let maxScorePerMatch = 10
-    private let maxPenalizingPerMismatch = 5
-    private let timeFactor: Double = 3
-    private var choiceFirstCartInPairTime: Date = Date()
     
     private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter { cards[$0].isFaceUp }.only }
@@ -24,7 +21,6 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                 }
                 cards[index].isFaceUp = index == newValue
             }
-            choiceFirstCartInPairTime = Date()
         }
     }
     
@@ -45,14 +41,13 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
-                    
-                    calculateScore(isMatching: true)
+                    calculateScore(first: cards[chosenIndex], second: cards[potentialMatchIndex])
                 } else {
                     if cards[chosenIndex].isBeenSeen {
-                        calculateScore(isMatching: false)
+                        score -= 1
                     }
                     if cards[potentialMatchIndex].isBeenSeen {
-                        calculateScore(isMatching: false)
+                        score -= 1
                     }
                 }
                 cards[chosenIndex].isFaceUp = true
@@ -62,20 +57,75 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
     }
     
-    private mutating func calculateScore(isMatching: Bool) {
-        let choiceTimeFactor = Int(abs((timeFactor * choiceFirstCartInPairTime.timeIntervalSinceNow).rounded()))
-        if isMatching {
-            score += max((maxScorePerMatch - choiceTimeFactor), 1)
-        } else {
-            score -= max(min(choiceTimeFactor, maxPenalizingPerMismatch), 1)
+    private mutating func calculateScore(first f: Card, second s: Card) {
+        score += 2
+        if f.hasEarnedBonus {
+            score += Int(maxAdditionScore * f.bonusRemaining)
+        }
+        if s.hasEarnedBonus {
+            score += Int(maxAdditionScore * s.bonusRemaining)
         }
     }
     
     struct Card: Identifiable {
-        var isFaceUp: Bool = false
+        var isFaceUp: Bool = false {
+            didSet {
+                if isFaceUp {
+                    startUsingBonusTime()
+                } else {
+                    stopUsingBonusTime()
+                }
+            }
+        }
         var isBeenSeen: Bool = false
         var isMatched: Bool = false
+        {
+            didSet {
+                stopUsingBonusTime()
+            }
+        }
         var content: CardContent
         var id: Int
+        
+        // MARK: - Bonus Time
+        
+        let bonusTimeLimit: TimeInterval = 6
+        var pastFaceUpTime: TimeInterval = 0
+        var lastFaceUpDate: Date?
+        
+        var isConsumingBonusTime: Bool {
+            isFaceUp && !isMatched && bonusTimeRemaining > 0
+        }
+        
+        private var faceUpTime: TimeInterval {
+            if let lastFaceUpDate = lastFaceUpDate {
+                return pastFaceUpTime + Date().timeIntervalSince(lastFaceUpDate)
+            } else {
+                return pastFaceUpTime
+            }
+        }
+        
+        var bonusTimeRemaining: TimeInterval {
+            max(0, bonusTimeLimit - pastFaceUpTime)
+        }
+        
+        var bonusRemaining: Double {
+            (bonusTimeLimit > 0 && bonusTimeRemaining > 0) ? bonusTimeRemaining/bonusTimeLimit : 0
+        }
+        
+        var hasEarnedBonus: Bool {
+            isMatched && bonusTimeRemaining > 0
+        }
+        
+        private mutating func startUsingBonusTime() {
+            if isConsumingBonusTime, lastFaceUpDate == nil {
+                lastFaceUpDate = Date()
+            }
+        }
+        
+        private mutating func stopUsingBonusTime() {
+            pastFaceUpTime = faceUpTime
+            lastFaceUpDate = nil
+        }
     }
 }
