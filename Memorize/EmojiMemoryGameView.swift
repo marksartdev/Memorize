@@ -15,7 +15,11 @@ struct EmojiMemoryGameView: View {
         VStack {
             HStack {
                 Spacer()
-                Button(action: emojiMemoryGame.resetGame) {
+                Button(action: {
+                    withAnimation(Animation.easeInOut) {
+                        emojiMemoryGame.resetGame()
+                    }
+                }) {
                     Text("New Game")
                         .foregroundColor(colorScheme == .dark ? .green : .blue)
                 }
@@ -28,7 +32,9 @@ struct EmojiMemoryGameView: View {
             }
             Grid(emojiMemoryGame.cards) { card in
                 CardView(card: card, colors: emojiMemoryGame.colors).onTapGesture {
-                    emojiMemoryGame.choose(card: card)
+                    withAnimation(Animation.linear(duration: cardRotationDuration)) {
+                        emojiMemoryGame.choose(card: card)
+                    }
                 }
                 .padding(5)
             }
@@ -38,6 +44,10 @@ struct EmojiMemoryGameView: View {
         }
         .padding()
     }
+    
+    // MARK: Drawing Constants
+    
+    private let cardRotationDuration: Double = 0.75
 }
 
 struct CardView: View {
@@ -59,12 +69,22 @@ struct CardView: View {
                     .padding(5).opacity(0.4)
                 Text(card.content)
                     .font(.system(size: fontSize(for: size)))
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    .animation(
+                        card.isMatched
+                            ? Animation.linear(duration: emojiRotationDuration)
+                            .repeatForever(autoreverses: false)
+                            : .default
+                    )
             }
             .cardify(isFaceUp: card.isFaceUp, colors: colors)
+            .transition(.scale)
         }
     }
     
     // MARK: Drawing Constants
+    
+    private let emojiRotationDuration: Double = 1
     
     private func fontSize(for size: CGSize) -> CGFloat {
         min(size.width, size.height) * 0.7
